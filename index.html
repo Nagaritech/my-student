@@ -1,1 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#123b63"
+  >
+
+  <meta
+    name="description"
+    content="My Student - Professional Student Result Management System"
+  >
+
+  <title>My Student | Dashboard</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+
+<body>
+
+
+  <!-- =====================================================
+       APP
+  ====================================================== -->
+
+  <div class="app">
+
+
+    <!-- ===================================================
+         HEADER
+    ==================================================== -->
+
+    <header class="app-header">
+
+      <div class="brand">
+
+        <img
+          src="jpg.image"
+          alt="My Student Logo"
+        >
+
+        <div class="brand-text">
+
+          <h1>
+            My Student
+          </h1>
+
+          <p>
+            Student Result Management System
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- MENU BUTTON -->
+
+      <button
+        type="button"
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </button>
+
+    </header>
+
+
+
+    <!-- ===================================================
+         SIDE MENU OVERLAY
+    ==================================================== -->
+
+    <div
+      class="menu-overlay"
+      id="menuOverlay"
+    ></div>
+
+
+
+    <!-- ===================================================
+         SIDE MENU
+    ==================================================== -->
+
+    <aside
+      class="side-menu"
+      id="sideMenu"
+      aria-hidden="true"
+    >
+
+
+      <!-- MENU HEADER -->
+
+      <div class="side-menu-header">
+
+        <div class="side-menu-brand">
+
+          <img
+            src="jpg.image"
+            alt="My Student Logo"
+          >
+
+          <div>
+
+            <strong>
+              My Student
+            </strong>
+
+            <small>
+              Student Management
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="side-menu-close"
+          id="sideMenuClose"
+          aria-label="Close menu"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+
+      <!-- MENU ITEMS -->
+
+      <nav
+        class="side-menu-nav"
+        aria-label="Main navigation"
+      >
+
+
+        <button
+          type="button"
+          class="menu-item active"
+          id="dashboardMenu"
+        >
+
+          <span class="menu-icon">
+            🏠
+          </span>
+
+          <span>
+            Dashboard
+          </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="menu-item"
+          id="studentsMenu"
+        >
+
+          <span class="menu-icon">
+            👨‍🎓
+          </span>
+
+          <span>
+            Students
+          </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="menu-item"
+          id="subjectsMenu"
+        >
+
+          <span class="menu-icon">
+            📚
+          </span>
+
+          <span>
+            Subjects
+          </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="menu-item"
+          id="resultsMenu"
+        >
+
+          <span class="menu-icon">
+            📋
+          </span>
+
+          <span>
+            Results
+          </span>
+
+        </button>
+
+
+
+        <!-- AVERAGE IS OPTIONAL -->
+
+        <button
+          type="button"
+          class="menu-item"
+          id="averageMenu"
+        >
+
+          <span class="menu-icon">
+            📊
+          </span>
+
+          <span>
+            Average
+          </span>
+
+          <span class="optional-badge">
+            Optional
+          </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="menu-item"
+          id="positionMenu"
+        >
+
+          <span class="menu-icon">
+            🏆
+          </span>
+
+          <span>
+            Positions
+          </span>
+
+        </button>
+
+
+
+        <div class="menu-divider"></div>
+
+
+
+        <button
+          type="button"
+          class="menu-item"
+          id="settingsMenu"
+        >
+
+          <span class="menu-icon">
+            ⚙️
+          </span>
+
+          <span>
+            Settings
+          </span>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          class="menu-item logout-item"
+          id="logoutBtn"
+        >
+
+          <span class="menu-icon">
+            🚪
+          </span>
+
+          <span>
+            Logout
+          </span>
+
+        </button>
+
+
+      </nav>
+
+
+      <!-- MENU FOOTER -->
+
+      <div class="side-menu-footer">
+
+        <p>
+          My Student
+        </p>
+
+        <small>
+          Student Result Management System
+        </small>
+
+      </div>
+
+
+    </aside>
+
+
+
+    <!-- ===================================================
+         MAIN CONTENT
+    ==================================================== -->
+
+    <main class="container">
+
+
+      <!-- =================================================
+           DASHBOARD WELCOME
+      ================================================== -->
+
+      <section class="dashboard-title">
+
+        <div>
+
+          <p class="welcome-label">
+            Welcome back 👋
+          </p>
+
+          <h2>
+            Dashboard
+          </h2>
+
+          <p class="dashboard-subtitle">
+            Manage students, subjects, marks and
+            academic results easily.
+          </p>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           STATISTICS
+      ================================================== -->
+
+      <section
+        class="stats-grid"
+        aria-label="Dashboard statistics"
+      >
+
+
+        <!-- STUDENTS -->
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div class="stat-icon">
+              👨‍🎓
+            </div>
+
+            <span class="stat-status">
+              Active
+            </span>
+
+          </div>
+
+          <div class="stat-label">
+            Total Students
+          </div>
+
+          <div
+            class="stat-value"
+            id="studentCount"
+          >
+            0
+          </div>
+
+        </div>
+
+
+
+        <!-- SUBJECTS -->
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div class="stat-icon">
+              📚
+            </div>
+
+            <span class="stat-status">
+              Active
+            </span>
+
+          </div>
+
+          <div class="stat-label">
+            Total Subjects
+          </div>
+
+          <div
+            class="stat-value"
+            id="subjectCount"
+          >
+            0
+          </div>
+
+        </div>
+
+
+
+        <!-- CALCULATION -->
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div class="stat-icon">
+              🧮
+            </div>
+
+            <span class="stat-status">
+              Result
+            </span>
+
+          </div>
+
+          <div class="stat-label">
+            Calculation
+          </div>
+
+          <div
+            class="stat-value"
+            id="calculationStatus"
+          >
+            —
+          </div>
+
+        </div>
+
+
+
+        <!-- POSITION -->
+
+        <div class="stat-card">
+
+          <div class="stat-card-top">
+
+            <div class="stat-icon">
+              🏆
+            </div>
+
+            <span class="stat-status">
+              Ranking
+            </span>
+
+          </div>
+
+          <div class="stat-label">
+            Position
+          </div>
+
+          <div
+            class="stat-value"
+            id="positionStatus"
+          >
+            —
+          </div>
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- =================================================
+           QUICK ACTIONS
+      ================================================== -->
+
+      <section
+        class="card quick-actions-card"
+        id="quickActionsSection"
+      >
+
+
+        <div class="section-heading">
+
+          <div>
+
+            <h3 class="card-title">
+              Quick Actions
+            </h3>
+
+            <p class="section-description">
+              Choose an action to manage your student results.
+            </p>
+
+          </div>
+
+        </div>
+
+
+
+        <div class="action-grid">
+
+
+          <!-- ADD STUDENT -->
+
+          <button
+            class="action-btn"
+            id="addStudentBtn"
+            type="button"
+          >
+
+            <span class="icon">
+              👨‍🎓
+            </span>
+
+            <span class="action-title">
+              Add Student
+            </span>
+
+            <span class="action-description">
+              Register a new student
+            </span>
+
+          </button>
+
+
+
+          <!-- ADD SUBJECT -->
+
+          <button
+            class="action-btn"
+            id="addSubjectBtn"
+            type="button"
+          >
+
+            <span class="icon">
+              📚
+            </span>
+
+            <span class="action-title">
+              Add Subject
+            </span>
+
+            <span class="action-description">
+              Add a new subject
+            </span>
+
+          </button>
+
+
+
+          <!-- CALCULATE MARKS -->
+
+          <button
+            class="action-btn"
+            id="calculateBtn"
+            type="button"
+          >
+
+            <span class="icon">
+              🧮
+            </span>
+
+            <span class="action-title">
+              Calculate Marks
+            </span>
+
+            <span class="action-description">
+              Calculate student totals
+            </span>
+
+          </button>
+
+
+
+          <!-- POSITION -->
+
+          <button
+            class="action-btn"
+            id="positionBtn"
+            type="button"
+          >
+
+            <span class="icon">
+              🏆
+            </span>
+
+            <span class="action-title">
+              Make Position
+            </span>
+
+            <span class="action-description">
+              Rank students by result
+            </span>
+
+          </button>
+
+
+
+          <!-- AVERAGE -->
+
+          <button
+            class="action-btn average-action"
+            id="addAverageBtn"
+            type="button"
+          >
+
+            <span class="icon">
+              📊
+            </span>
+
+            <span class="action-title">
+              Average
+            </span>
+
+            <span class="action-description">
+              Optional average view
+            </span>
+
+          </button>
+
+
+        </div>
+
+
+
+        <!-- QUICK ACTION MESSAGE -->
+
+        <div
+          id="quickActionMessage"
+          class="quick-action-message-container"
+        ></div>
+
+
+      </section>
+
+
+
+      <!-- =================================================
+           REPORT SECTION
+      ================================================== -->
+
+      <section
+        class="report-section"
+        id="reportSection"
+      >
+
+
+        <div class="card">
+
+
+          <div class="section-heading report-heading">
+
+            <div>
+
+              <h3 class="card-title">
+                Complete Report Sheet
+              </h3>
+
+              <p class="section-description">
+                Enter marks and manage the complete student result.
+              </p>
+
+            </div>
+
+
+            <div class="report-badge">
+              Academic Report
+            </div>
+
+          </div>
+
+
+
+          <!-- REPORT PREVIEW -->
+
+          <div
+            id="reportPreview"
+            class="report-preview"
+          >
+
+
+            <div class="empty-state">
+
+              <div class="empty-icon">
+                📄
+              </div>
+
+              <h3>
+                Report Not Ready
+              </h3>
+
+              <p>
+                Add students and subjects,
+                enter their marks, then calculate.
+              </p>
+
+            </div>
+
+
+          </div>
+
+
+
+          <!-- =================================================
+               REPORT BUTTONS
+          ================================================== -->
+
+          <div class="report-actions">
+
+
+            <button
+              class="btn btn-primary"
+              id="printReportBtn"
+              type="button"
+            >
+
+              <span>
+                🖨️
+              </span>
+
+              <span>
+                Print Report
+              </span>
+
+            </button>
+
+
+
+            <button
+              class="btn btn-success"
+              id="downloadPdfBtn"
+              type="button"
+            >
+
+              <span>
+                📄
+              </span>
+
+              <span>
+                Download PDF
+              </span>
+
+            </button>
+
+
+
+            <button
+              class="btn btn-danger"
+              id="clearDataBtn"
+              type="button"
+            >
+
+              <span>
+                🗑️
+              </span>
+
+              <span>
+                Clear All Data
+              </span>
+
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- =================================================
+           INFORMATION CARD
+      ================================================== -->
+
+      <section class="card information-card">
+
+
+        <div class="information-icon">
+          💡
+        </div>
+
+
+        <div class="information-content">
+
+          <h3>
+            How My Student Works
+          </h3>
+
+          <p>
+            Add your students and subjects first.
+            Enter each student's marks in the report sheet,
+            then calculate the results and create positions.
+          </p>
+
+        </div>
+
+
+      </section>
+
+
+    </main>
+
+
+
+    <!-- ===================================================
+         FOOTER
+    ==================================================== -->
+
+    <footer class="app-footer">
+
+
+      <p>
+
+        <strong>
+          My Student
+        </strong>
+
+        <span>
+          —
+        </span>
+
+        Student Result Management System
+
+      </p>
+
+
+      <p class="powered-by">
+
+        Powered by:
+        <strong>
+          Nagari Technologies
+        </strong>
+
+      </p>
+
+
+    </footer>
+
+
+  </div>
+
+
+
+  <!-- =====================================================
+       APP SCRIPT
+  ====================================================== -->
+
+  <script src="app.js"></script>
+
+
+</body>
+
+      </html>
