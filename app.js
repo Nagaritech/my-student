@@ -1,22 +1,20 @@
-/* =====================================================
-   MY STUDENT
-   STUDENT RESULT MANAGEMENT SYSTEM
-   COMPLETE APP.JS
-===================================================== */
-
 "use strict";
 
 document.addEventListener("DOMContentLoaded", function () {
 
-  /* =====================================================
+  /* =========================================================
+     MY STUDENT — COMPLETE APP.JS
+     ========================================================= */
+
+  /* =========================================================
      DATA
-  ===================================================== */
+     ========================================================= */
 
   let students =
-    JSON.parse(localStorage.getItem("myStudents")) || [];
+    JSON.parse(localStorage.getItem("myStudents") || "[]");
 
   let subjects =
-    JSON.parse(localStorage.getItem("mySubjects")) || [];
+    JSON.parse(localStorage.getItem("mySubjects") || "[]");
 
   let calculationDone =
     localStorage.getItem("calculationDone") === "true";
@@ -27,10 +25,52 @@ document.addEventListener("DOMContentLoaded", function () {
   let averageEnabled =
     localStorage.getItem("averageEnabled") === "true";
 
+  let schoolName =
+    localStorage.getItem("schoolName") || "My School";
 
-  /* =====================================================
+  let schoolLogo =
+    localStorage.getItem("schoolLogo") || "";
+
+
+  /* =========================================================
      ELEMENTS
-  ===================================================== */
+     ========================================================= */
+
+  const menuToggle =
+    document.getElementById("menuToggle");
+
+  const sideMenu =
+    document.getElementById("sideMenu");
+
+  const sideMenuClose =
+    document.getElementById("sideMenuClose");
+
+  const menuOverlay =
+    document.getElementById("menuOverlay");
+
+  const dashboardMenu =
+    document.getElementById("dashboardMenu");
+
+  const studentsMenu =
+    document.getElementById("studentsMenu");
+
+  const subjectsMenu =
+    document.getElementById("subjectsMenu");
+
+  const resultsMenu =
+    document.getElementById("resultsMenu");
+
+  const averageMenu =
+    document.getElementById("averageMenu");
+
+  const positionMenu =
+    document.getElementById("positionMenu");
+
+  const settingsMenu =
+    document.getElementById("settingsMenu");
+
+  const logoutBtn =
+    document.getElementById("logoutBtn");
 
   const studentCount =
     document.getElementById("studentCount");
@@ -56,6 +96,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const positionBtn =
     document.getElementById("positionBtn");
 
+  const addAverageBtn =
+    document.getElementById("addAverageBtn");
+
   const reportPreview =
     document.getElementById("reportPreview");
 
@@ -67,11 +110,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const clearDataBtn =
     document.getElementById("clearDataBtn");
-
-
-  /* =====================================================
+/* =========================================================
      SAVE DATA
-  ===================================================== */
+     ========================================================= */
 
   function saveData() {
 
@@ -99,16 +140,26 @@ document.addEventListener("DOMContentLoaded", function () {
       "averageEnabled",
       String(averageEnabled)
     );
+
+    localStorage.setItem(
+      "schoolName",
+      schoolName
+    );
+
+    localStorage.setItem(
+      "schoolLogo",
+      schoolLogo
+    );
   }
 
 
-  /* =====================================================
+  /* =========================================================
      ESCAPE HTML
-  ===================================================== */
+     ========================================================= */
 
   function escapeHTML(value) {
 
-    return String(value)
+    return String(value ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -117,9 +168,45 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  /* =====================================================
+  /* =========================================================
+     ORDINAL POSITION
+     ========================================================= */
+
+  function ordinal(number) {
+
+    const n = Number(number);
+
+    if (!Number.isFinite(n)) {
+      return "—";
+    }
+
+    if (
+      n % 100 >= 11 &&
+      n % 100 <= 13
+    ) {
+      return n + "th";
+    }
+
+    switch (n % 10) {
+
+      case 1:
+        return n + "st";
+
+      case 2:
+        return n + "nd";
+
+      case 3:
+        return n + "rd";
+
+      default:
+        return n + "th";
+    }
+  }
+
+
+  /* =========================================================
      DASHBOARD
-  ===================================================== */
+     ========================================================= */
 
   function updateDashboard() {
 
@@ -135,19 +222,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (calculationStatus) {
       calculationStatus.textContent =
-        calculationDone ? "Done" : "—";
+        calculationDone
+          ? "Done"
+          : "—";
     }
 
     if (positionStatus) {
+
       positionStatus.textContent =
-        positionDone ? "Done" : "—";
+        positionDone
+          ? "Done"
+          : "—";
     }
+
+    updateAverageButton();
   }
 
 
-  /* =====================================================
-     ACTION MESSAGE
-  ===================================================== */
+  /* =========================================================
+     MESSAGE
+     ========================================================= */
 
   function showActionMessage(
     title,
@@ -165,8 +259,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     let box =
-      quickCard.querySelector(
-        ".quick-action-message"
+      document.getElementById(
+        "quickActionMessage"
       );
 
     if (!box) {
@@ -174,15 +268,14 @@ document.addEventListener("DOMContentLoaded", function () {
       box =
         document.createElement("div");
 
+      box.id =
+        "quickActionMessage";
+
       box.className =
-        "quick-action-message";
+        "quick-action-message-container";
 
       quickCard.appendChild(box);
     }
-
-    box.className =
-      "quick-action-message " +
-      type;
 
     let icon = "✓";
 
@@ -200,18 +293,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     box.innerHTML = `
 
-      <div class="success-animation">
+      <div class="quick-action-message ${type}">
 
-        <div class="success-icon">
-          ${icon}
-        </div>
+        <div class="success-animation">
 
-        <div class="action-message-title">
-          ${escapeHTML(title)}
-        </div>
+          <div class="success-icon">
+            ${icon}
+          </div>
 
-        <div class="action-message-text">
-          ${message}
+          <div class="action-message-title">
+            ${escapeHTML(title)}
+          </div>
+
+          <div class="action-message-text">
+            ${message}
+          </div>
+
         </div>
 
       </div>
@@ -222,11 +319,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       setTimeout(function () {
 
-        if (
-          box &&
-          box.parentNode
-        ) {
-          box.remove();
+        if (box) {
+          box.innerHTML = "";
         }
 
       }, 4000);
@@ -234,9 +328,217 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  /* =====================================================
+  /* =========================================================
+     SIDE MENU
+     ========================================================= */
+
+  function openMenu() {
+
+    if (sideMenu) {
+      sideMenu.classList.add("open");
+      sideMenu.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+    }
+
+    if (menuOverlay) {
+      menuOverlay.classList.add("open");
+    }
+
+    if (menuToggle) {
+      menuToggle.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+    }
+  }
+
+
+  function closeMenu() {
+
+    if (sideMenu) {
+      sideMenu.classList.remove("open");
+      sideMenu.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+    }
+
+    if (menuOverlay) {
+      menuOverlay.classList.remove("open");
+    }
+
+    if (menuToggle) {
+      menuToggle.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+    }
+  }
+
+
+  if (menuToggle) {
+    menuToggle.addEventListener(
+      "click",
+      openMenu
+    );
+  }
+
+
+  if (sideMenuClose) {
+    sideMenuClose.addEventListener(
+      "click",
+      closeMenu
+    );
+  }
+
+
+  if (menuOverlay) {
+    menuOverlay.addEventListener(
+      "click",
+      closeMenu
+    );
+                          }
+
+  /* =========================================================
+     MENU NAVIGATION
+     ========================================================= */
+
+  function scrollToElement(id) {
+
+    closeMenu();
+
+    const element =
+      document.getElementById(id);
+
+    if (element) {
+
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  }
+
+
+  if (dashboardMenu) {
+
+    dashboardMenu.addEventListener(
+      "click",
+      function () {
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+
+      }
+    );
+  }
+
+
+  if (studentsMenu) {
+
+    studentsMenu.addEventListener(
+      "click",
+      function () {
+
+        closeMenu();
+
+        if (addStudentBtn) {
+          addStudentBtn.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        }
+
+      }
+    );
+  }
+
+
+  if (subjectsMenu) {
+
+    subjectsMenu.addEventListener(
+      "click",
+      function () {
+
+        closeMenu();
+
+        if (addSubjectBtn) {
+          addSubjectBtn.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        }
+
+      }
+    );
+  }
+
+
+  if (resultsMenu) {
+
+    resultsMenu.addEventListener(
+      "click",
+      function () {
+        scrollToElement(
+          "reportSection"
+        );
+      }
+    );
+  }
+
+
+  if (averageMenu) {
+
+    averageMenu.addEventListener(
+      "click",
+      function () {
+
+        closeMenu();
+
+        toggleAverage();
+
+      }
+    );
+  }
+
+
+  if (positionMenu) {
+
+    positionMenu.addEventListener(
+      "click",
+      function () {
+
+        closeMenu();
+
+        makePosition();
+
+      }
+    );
+  }
+
+
+  if (settingsMenu) {
+
+    settingsMenu.addEventListener(
+      "click",
+      function () {
+
+        closeMenu();
+
+        openSettings();
+
+      }
+    );
+  }
+
+
+  /* =========================================================
      INPUT MODAL
-  ===================================================== */
+     ========================================================= */
 
   function openInputModal(
     title,
@@ -355,6 +657,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "saveInputModal"
       );
 
+
     function closeModal() {
 
       if (
@@ -365,19 +668,24 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
+
     if (closeBtn) {
+
       closeBtn.addEventListener(
         "click",
         closeModal
       );
     }
 
+
     if (cancelBtn) {
+
       cancelBtn.addEventListener(
         "click",
         closeModal
       );
     }
+
 
     if (saveBtn) {
 
@@ -398,9 +706,11 @@ document.addEventListener("DOMContentLoaded", function () {
           callback(value);
 
           closeModal();
+
         }
       );
     }
+
 
     if (input) {
 
@@ -423,9 +733,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             closeModal();
           }
+
         }
       );
     }
+
 
     setTimeout(function () {
 
@@ -435,9 +747,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }, 100);
     }
-  /* =====================================================
+  /* =========================================================
      ADD STUDENT
-  ===================================================== */
+     ========================================================= */
 
   function addStudent() {
 
@@ -452,11 +764,13 @@ document.addEventListener("DOMContentLoaded", function () {
             function (student) {
 
               return String(
-                student.name
+                student.name || ""
               ).toLowerCase() ===
               name.toLowerCase();
+
             }
           );
+
 
         if (exists) {
 
@@ -469,13 +783,15 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
+
         students.push({
 
           id:
-            String(
-              Date.now() +
-              Math.random()
-            ),
+            Date.now() +
+            "-" +
+            Math.random()
+              .toString(36)
+              .substring(2),
 
           name:
             name,
@@ -490,15 +806,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         });
 
+
         calculationDone = false;
 
         positionDone = false;
+
 
         saveData();
 
         updateDashboard();
 
         renderReport();
+
 
         showActionMessage(
           "Student Added Successfully",
@@ -511,14 +830,24 @@ document.addEventListener("DOMContentLoaded", function () {
           `,
           "success"
         );
+
       }
     );
   }
 
 
-  /* =====================================================
+  if (addStudentBtn) {
+
+    addStudentBtn.addEventListener(
+      "click",
+      addStudent
+    );
+  }
+
+
+  /* =========================================================
      ADD SUBJECT
-  ===================================================== */
+     ========================================================= */
 
   function addSubject() {
 
@@ -533,11 +862,13 @@ document.addEventListener("DOMContentLoaded", function () {
             function (subject) {
 
               return String(
-                subject.name
+                subject.name || ""
               ).toLowerCase() ===
               name.toLowerCase();
+
             }
           );
+
 
         if (exists) {
 
@@ -550,22 +881,26 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
+
         subjects.push({
 
           id:
-            String(
-              Date.now() +
-              Math.random()
-            ),
+            Date.now() +
+            "-" +
+            Math.random()
+              .toString(36)
+              .substring(2),
 
           name:
             name
 
         });
 
+
         calculationDone = false;
 
         positionDone = false;
+
 
         saveData();
 
@@ -573,115 +908,64 @@ document.addEventListener("DOMContentLoaded", function () {
 
         renderReport();
 
+
         showActionMessage(
           "Subject Added Successfully",
           escapeHTML(name),
           "success"
         );
+
       }
     );
   }
 
 
-  /* =====================================================
-     CREATE AVERAGE BUTTON
-  ===================================================== */
+  if (addSubjectBtn) {
 
-  function createAverageButton() {
+    addSubjectBtn.addEventListener(
+      "click",
+      addSubject
+    );
+  }
 
-    const actionGrid =
-      document.querySelector(
-        ".action-grid"
+
+  /* =========================================================
+     AVERAGE
+     ========================================================= */
+
+  function updateAverageButton() {
+
+    if (!addAverageBtn) {
+      return;
+    }
+
+    const title =
+      addAverageBtn.querySelector(
+        ".action-title"
       );
 
-    if (!actionGrid) {
-      return;
+    if (title) {
+
+      title.textContent =
+        averageEnabled
+          ? "Average: ON"
+          : "Average";
     }
-
-    if (
-      document.getElementById(
-        "addAverageBtn"
-      )
-    ) {
-      return;
-    }
-
-    const button =
-      document.createElement("button");
-
-    button.type =
-      "button";
-
-    button.id =
-      "addAverageBtn";
-
-    button.className =
-      "action-btn";
-
-    button.innerHTML = `
-
-      <span class="icon">
-        📊
-      </span>
-
-      <span>
-        ${
-          averageEnabled
-            ? "Average: ON"
-            : "Add Average"
-        }
-      </span>
-
-    `;
-
-    actionGrid.appendChild(button);
-
-    button.addEventListener(
-      "click",
-      function (event) {
-
-        event.preventDefault();
-
-        toggleAverage();
-
-      }
-    );
   }
 
-
-  /* =====================================================
-     AVERAGE ON / OFF
-  ===================================================== */
 
   function toggleAverage() {
 
     averageEnabled =
       !averageEnabled;
 
+
     saveData();
 
     renderReport();
 
-    const button =
-      document.getElementById(
-        "addAverageBtn"
-      );
+    updateDashboard();
 
-    if (button) {
-
-      const text =
-        button.querySelector(
-          "span:last-child"
-        );
-
-      if (text) {
-
-        text.textContent =
-          averageEnabled
-            ? "Average: ON"
-            : "Add Average";
-      }
-    }
 
     showActionMessage(
       averageEnabled
@@ -690,16 +974,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
       averageEnabled
         ? "Average will now appear in the student results."
-        : "Average has been removed from the student results.",
+        : "Average will not appear in the student results.",
 
       "info"
     );
   }
 
 
-  /* =====================================================
+  if (addAverageBtn) {
+
+    addAverageBtn.addEventListener(
+      "click",
+      toggleAverage
+    );
+  }
+
+
+  /* =========================================================
      CALCULATE MARKS
-  ===================================================== */
+     ========================================================= */
 
   function calculateMarks() {
 
@@ -714,6 +1007,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+
     if (subjects.length === 0) {
 
       showActionMessage(
@@ -725,9 +1019,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+
     if (calculateBtn) {
       calculateBtn.disabled = true;
     }
+
 
     showActionMessage(
       "Calculating Results...",
@@ -740,6 +1036,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div
             class="calculation-progress"
             id="calculationProgress"
+            style="width:0%;"
           ></div>
 
         </div>
@@ -747,36 +1044,56 @@ document.addEventListener("DOMContentLoaded", function () {
       "loading"
     );
 
+
     let progress = 0;
 
+
     const timer =
-      setInterval(function () {
+      setInterval(
+        function () {
 
-        progress += 5;
+          progress += 5;
 
-        const progressBar =
-          document.getElementById(
-            "calculationProgress"
-          );
 
-        if (progressBar) {
+          const progressBar =
+            document.getElementById(
+              "calculationProgress"
+            );
 
-          progressBar.style.width =
-            progress + "%";
-        }
 
-        if (progress >= 100) {
+          if (progressBar) {
 
-          clearInterval(timer);
+            progressBar.style.width =
+              progress + "%";
+          }
 
-          finishCalculation();
-        }
 
-      }, 80);
+          if (progress >= 100) {
+
+            clearInterval(timer);
+
+            finishCalculation();
+
+          }
+
+        },
+        80
+      );
   }
-  /* =====================================================
+
+
+  if (calculateBtn) {
+
+    calculateBtn.addEventListener(
+      "click",
+      calculateMarks
+    );
+  }
+
+
+  /* =========================================================
      FINISH CALCULATION
-  ===================================================== */
+     ========================================================= */
 
   function finishCalculation() {
 
@@ -787,9 +1104,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let count = 0;
 
+
         if (!student.marks) {
           student.marks = {};
         }
+
 
         subjects.forEach(
           function (subject) {
@@ -799,6 +1118,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 subject.id
               ];
 
+
             if (
               rawValue !== undefined &&
               rawValue !== ""
@@ -806,6 +1126,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
               const value =
                 Number(rawValue);
+
 
               if (
                 Number.isFinite(value)
@@ -816,25 +1137,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 count++;
               }
             }
+
           }
         );
 
+
         student.total =
           total;
+
 
         student.average =
           count > 0
             ? total / count
             : 0;
 
+
         student.position =
           null;
+
       }
     );
+
 
     calculationDone = true;
 
     positionDone = false;
+
 
     saveData();
 
@@ -842,11 +1170,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderReport();
 
+
     showActionMessage(
       "Calculation Completed",
       "All student results have been calculated successfully.",
       "success"
     );
+
 
     if (calculateBtn) {
       calculateBtn.disabled = false;
@@ -854,9 +1184,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  /* =====================================================
+  /* =========================================================
      MAKE POSITION
-  ===================================================== */
+     ========================================================= */
 
   function makePosition() {
 
@@ -871,6 +1201,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+
     if (subjects.length === 0) {
 
       showActionMessage(
@@ -881,6 +1212,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       return;
     }
+
 
     if (!calculationDone) {
 
@@ -893,9 +1225,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+
     if (positionBtn) {
       positionBtn.disabled = true;
     }
+
 
     showActionMessage(
       "Making Positions...",
@@ -908,6 +1242,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div
             class="calculation-progress"
             id="positionProgress"
+            style="width:0%;"
           ></div>
 
         </div>
@@ -915,38 +1250,56 @@ document.addEventListener("DOMContentLoaded", function () {
       "loading"
     );
 
+
     let progress = 0;
 
+
     const timer =
-      setInterval(function () {
+      setInterval(
+        function () {
 
-        progress += 5;
+          progress += 5;
 
-        const progressBar =
-          document.getElementById(
-            "positionProgress"
-          );
 
-        if (progressBar) {
+          const progressBar =
+            document.getElementById(
+              "positionProgress"
+            );
 
-          progressBar.style.width =
-            progress + "%";
-        }
 
-        if (progress >= 100) {
+          if (progressBar) {
 
-          clearInterval(timer);
+            progressBar.style.width =
+              progress + "%";
+          }
 
-          finishPosition();
-        }
 
-      }, 80);
+          if (progress >= 100) {
+
+            clearInterval(timer);
+
+            finishPosition();
+
+          }
+
+        },
+        80
+      );
   }
 
 
-  /* =====================================================
+  if (positionBtn) {
+
+    positionBtn.addEventListener(
+      "click",
+      makePosition
+    );
+  }
+
+
+  /* =========================================================
      FINISH POSITION
-  ===================================================== */
+     ========================================================= */
 
   function finishPosition() {
 
@@ -960,12 +1313,15 @@ document.addEventListener("DOMContentLoaded", function () {
           Number(
             a.total || 0
           );
+
         }
       );
+
 
     let currentPosition = 0;
 
     let previousTotal = null;
+
 
     sorted.forEach(
       function (student, index) {
@@ -974,6 +1330,7 @@ document.addEventListener("DOMContentLoaded", function () {
           Number(
             student.total || 0
           );
+
 
         if (
           previousTotal === null ||
@@ -984,13 +1341,17 @@ document.addEventListener("DOMContentLoaded", function () {
             index + 1;
         }
 
+
         student.position =
           currentPosition;
 
+
         previousTotal =
           total;
+
       }
     );
+
 
     students =
       students.map(
@@ -1002,13 +1363,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 return item.id ===
                   original.id;
+
               }
             ) || original
           );
+
         }
       );
 
+
     positionDone = true;
+
 
     saveData();
 
@@ -1016,11 +1381,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderReport();
 
+
     showActionMessage(
       "Position Completed",
       "Student positions have been calculated successfully.",
       "success"
     );
+
 
     if (positionBtn) {
       positionBtn.disabled = false;
@@ -1028,15 +1395,210 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  /* =====================================================
+  /* =========================================================
+     MARK INPUT CHANGE
+     ========================================================= */
+
+  function updateMark(
+    studentId,
+    subjectId,
+    value
+  ) {
+
+    const student =
+      students.find(
+        function (item) {
+
+          return String(item.id) ===
+            String(studentId);
+
+        }
+      );
+
+
+    if (!student) {
+      return;
+    }
+
+
+    if (!student.marks) {
+      student.marks = {};
+    }
+
+
+    if (value === "") {
+
+      delete student.marks[
+        subjectId
+      ];
+
+    } else {
+
+      let number =
+        Number(value);
+
+
+      if (!Number.isFinite(number)) {
+        number = 0;
+      }
+
+
+      if (number < 0) {
+        number = 0;
+      }
+
+
+      if (number > 100) {
+        number = 100;
+      }
+
+
+      student.marks[
+        subjectId
+      ] = number;
+    }
+
+
+    calculationDone = false;
+
+    positionDone = false;
+
+
+    saveData();
+
+    updateDashboard();
+
+
+    /* Keep the changed value visible
+       without destroying the input. */
+
+    updateStudentRowTotals(
+      studentId
+    );
+  }
+
+
+  function updateStudentRowTotals(
+    studentId
+  ) {
+
+    const student =
+      students.find(
+        function (item) {
+
+          return String(item.id) ===
+            String(studentId);
+
+        }
+      );
+
+
+    if (!student) {
+      return;
+    }
+
+
+    let total = 0;
+
+    let count = 0;
+
+
+    subjects.forEach(
+      function (subject) {
+
+        const value =
+          Number(
+            student.marks &&
+            student.marks[
+              subject.id
+            ]
+          );
+
+
+        if (
+          Number.isFinite(value)
+        ) {
+
+          total += value;
+
+          count++;
+        }
+
+      }
+    );
+
+
+    student.total =
+      total;
+
+
+    student.average =
+      count > 0
+        ? total / count
+        : 0;
+
+
+    const row =
+      document.querySelector(
+        `tr[data-student-id="${CSS.escape(String(studentId))}"]`
+      );
+
+
+    if (!row) {
+      return;
+    }
+
+
+    const totalCell =
+      row.querySelector(
+        ".student-total"
+      );
+
+
+    if (totalCell) {
+
+      totalCell.textContent =
+        total;
+    }
+
+
+    const averageCell =
+      row.querySelector(
+        ".student-average"
+      );
+
+
+    if (averageCell) {
+
+      averageCell.textContent =
+        student.average.toFixed(2);
+    }
+
+
+    const positionCell =
+      row.querySelector(
+        ".student-position"
+      );
+
+
+    if (positionCell) {
+
+      positionCell.textContent =
+        student.position
+          ? ordinal(student.position)
+          : "—";
+    }
+}
+/* =========================================================
      RENDER REPORT
-  ===================================================== */
+     ========================================================= */
 
   function renderReport() {
 
     if (!reportPreview) {
       return;
     }
+
 
     if (
       students.length === 0 ||
@@ -1067,6 +1629,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+
     let html = `
 
       <div class="report-table-wrapper">
@@ -1083,39 +1646,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
     `;
 
+
     subjects.forEach(
       function (subject) {
 
         html += `
 
           <th>
-            ${escapeHTML(
-              subject.name
-            )}
+            ${escapeHTML(subject.name)}
           </th>
 
         `;
+
       }
     );
 
+
     html += `
 
-          <th>Total</th>
+              <th>Total</th>
 
     `;
+
 
     if (averageEnabled) {
 
       html += `
 
-          <th>Average</th>
+              <th>Average</th>
 
       `;
     }
 
+
     html += `
 
-          <th>Position</th>
+              <th>Position</th>
 
             </tr>
 
@@ -1125,12 +1691,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     `;
 
+
     students.forEach(
       function (student, index) {
 
         html += `
 
-          <tr>
+          <tr
+            data-student-id="${escapeHTML(student.id)}"
+          >
 
             <td>
               <strong>
@@ -1140,13 +1709,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             <td>
               <strong>
-                ${escapeHTML(
-                  student.name
-                )}
+                ${escapeHTML(student.name)}
               </strong>
             </td>
 
         `;
+
 
         subjects.forEach(
           function (subject) {
@@ -1161,78 +1729,78 @@ document.addEventListener("DOMContentLoaded", function () {
                   ]
                 : "";
 
+
             html += `
 
               <td>
 
                 <input
-                  class="mark-input"
                   type="number"
                   min="0"
                   max="100"
-                  value="${escapeHTML(mark)}"
+                  step="1"
+                  class="mark-input"
                   data-student-id="${escapeHTML(student.id)}"
                   data-subject-id="${escapeHTML(subject.id)}"
+                  value="${escapeHTML(mark)}"
                 >
 
               </td>
 
             `;
+
           }
         );
 
+
         html += `
 
-            <td>
-              <strong>
-                ${
-                  calculationDone
-                    ? Number(
-                        student.total || 0
-                      )
-                    : "—"
-                }
-              </strong>
+            <td class="student-total">
+
+              ${Number(
+                student.total || 0
+              )}
+
             </td>
 
         `;
+
 
         if (averageEnabled) {
 
           html += `
 
-            <td>
-              <strong>
-                ${
-                  calculationDone
-                    ? Number(
-                        student.average || 0
-                      ).toFixed(2)
-                    : "—"
-                }
-              </strong>
+            <td class="student-average">
+
+              ${Number(
+                student.average || 0
+              ).toFixed(2)}
+
             </td>
 
           `;
         }
 
+
         html += `
 
-            <td>
-              <strong>
-                ${
-                  positionDone
-                    ? student.position
-                    : "—"
-                }
-              </strong>
+            <td class="student-position">
+
+              ${
+                student.position
+                  ? ordinal(student.position)
+                  : "—"
+              }
+
             </td>
 
           </tr>
 
         `;
+
       }
     );
+
 
     html += `
 
@@ -1244,26 +1812,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     `;
 
+
     reportPreview.innerHTML =
       html;
 
-    connectMarkInputs();
-  }
 
- /* =====================================================
-     MARK INPUTS
-  ===================================================== */
+    attachMarkListeners();
+}
+  /* =========================================================
+     MARK LISTENERS
+     ========================================================= */
 
-  function connectMarkInputs() {
-
-    if (!reportPreview) {
-      return;
-    }
+  function attachMarkListeners() {
 
     const inputs =
       reportPreview.querySelectorAll(
         ".mark-input"
       );
+
 
     inputs.forEach(
       function (input) {
@@ -1272,198 +1838,174 @@ document.addEventListener("DOMContentLoaded", function () {
           "input",
           function () {
 
-            const studentId =
-              String(
-                input.dataset.studentId
-              );
+            updateMark(
+              input.dataset.studentId,
+              input.dataset.subjectId,
+              input.value
+            );
 
-            const subjectId =
-              String(
-                input.dataset.subjectId
-              );
-
-            const student =
-              students.find(
-                function (item) {
-
-                  return String(
-                    item.id
-                  ) === studentId;
-                }
-              );
-
-            if (!student) {
-              return;
-            }
-
-            if (!student.marks) {
-              student.marks = {};
-            }
-
-            if (input.value === "") {
-
-              student.marks[
-                subjectId
-              ] = "";
-
-            } else {
-
-              let value =
-                Number(
-                  input.value
-                );
-
-              if (
-                !Number.isFinite(value)
-              ) {
-                value = 0;
-              }
-
-              value =
-                Math.max(
-                  0,
-                  Math.min(
-                    100,
-                    value
-                  )
-                );
-
-              input.value =
-                value;
-
-              student.marks[
-                subjectId
-              ] = value;
-            }
-
-            calculationDone = false;
-
-            positionDone = false;
-
-            student.total = 0;
-
-            student.average = 0;
-
-            student.position = null;
-
-            saveData();
-
-            updateDashboard();
           }
         );
+
+
+        input.addEventListener(
+          "change",
+          function () {
+
+            updateMark(
+              input.dataset.studentId,
+              input.dataset.subjectId,
+              input.value
+            );
+
+          }
+        );
+
       }
     );
   }
 
 
-  /* =====================================================
-     CLEAR DATA WARNING
-  ===================================================== */
+  /* =========================================================
+     SETTINGS
+     ========================================================= */
 
-  function showClearWarning() {
+  function openSettings() {
 
-    const oldModal =
+    const old =
       document.getElementById(
-        "clearDataModal"
+        "settingsModal"
       );
 
-    if (oldModal) {
-      oldModal.remove();
+    if (old) {
+      old.remove();
     }
+
 
     const modal =
       document.createElement("div");
 
     modal.id =
-      "clearDataModal";
+      "settingsModal";
 
     modal.className =
       "modal";
 
+
     modal.innerHTML = `
 
-      <div class="modal-content">
+      <div
+        class="modal-content"
+        style="max-width:500px;"
+      >
 
         <div class="modal-header">
 
           <h3>
-            Clear All Data
+            Settings
           </h3>
 
           <button
             type="button"
             class="modal-close"
-            id="closeClearModal"
+            id="settingsClose"
           >
             ×
           </button>
 
         </div>
 
+
+        <div class="form-group">
+
+          <label>
+            School Name
+          </label>
+
+          <input
+            type="text"
+            id="schoolNameInput"
+            class="form-control"
+            value="${escapeHTML(schoolName)}"
+            placeholder="Enter school name"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Add Logo
+          </label>
+
+          <input
+            type="file"
+            id="schoolLogoInput"
+            class="form-control"
+            accept="image/png,image/jpeg,image/jpg,image/webp"
+          >
+
+        </div>
+
+
         <div
+          id="logoPreviewBox"
           style="
             text-align:center;
-            padding:10px 0;
+            margin:15px 0;
           "
         >
 
-          <div
-            style="
-              font-size:48px;
-              margin-bottom:10px;
-            "
-          >
-            ⚠️
-          </div>
-
-          <h3
-            style="
-              color:#dc3545;
-              margin-bottom:8px;
-            "
-          >
-            Warning
-          </h3>
-
-          <p
-            style="
-              color:#687583;
-              font-size:14px;
-              line-height:1.6;
-            "
-          >
-            This action will remove all
-            students, subjects, marks,
-            calculations and positions
-            stored on this device.
-          </p>
+          ${
+            schoolLogo
+              ? `
+                <img
+                  src="${schoolLogo}"
+                  alt="School Logo"
+                  style="
+                    max-width:120px;
+                    max-height:120px;
+                    object-fit:contain;
+                    border-radius:8px;
+                  "
+                >
+              `
+              : `
+                <p>
+                  No school logo added.
+                </p>
+              `
+          }
 
         </div>
+
 
         <div
           style="
             display:flex;
             gap:10px;
-            margin-top:18px;
+            margin-top:20px;
           "
         >
 
           <button
             type="button"
             class="btn btn-light"
-            id="cancelClearData"
+            id="removeSchoolLogo"
             style="flex:1;"
           >
-            Cancel
+            Remove Logo
           </button>
+
 
           <button
             type="button"
-            class="btn btn-danger"
-            id="confirmClearData"
+            class="btn btn-primary"
+            id="saveSettings"
             style="flex:1;"
           >
-            Clear All
+            Save Settings
           </button>
 
         </div>
@@ -1472,24 +2014,139 @@ document.addEventListener("DOMContentLoaded", function () {
 
     `;
 
+
     document.body.appendChild(modal);
+
 
     const closeBtn =
       document.getElementById(
-        "closeClearModal"
+        "settingsClose"
       );
 
-    const cancelBtn =
+
+    const saveBtn =
       document.getElementById(
-        "cancelClearData"
+        "saveSettings"
       );
 
-    const confirmBtn =
+
+    const removeLogoBtn =
       document.getElementById(
-        "confirmClearData"
+        "removeSchoolLogo"
       );
 
-    function closeModal() {
+
+    const schoolInput =
+      document.getElementById(
+        "schoolNameInput"
+      );
+
+
+    const logoInput =
+      document.getElementById(
+        "schoolLogoInput"
+      );
+
+
+    const preview =
+      document.getElementById(
+        "logoPreviewBox"
+      );
+
+
+    let newLogo =
+      schoolLogo;
+
+
+    if (logoInput) {
+
+      logoInput.addEventListener(
+        "change",
+        function () {
+
+          const file =
+            logoInput.files &&
+            logoInput.files[0];
+
+
+          if (!file) {
+            return;
+          }
+
+
+          if (
+            !file.type.startsWith(
+              "image/"
+            )
+          ) {
+
+            showActionMessage(
+              "Invalid Logo",
+              "Please select an image file.",
+              "warning"
+            );
+
+            return;
+          }
+
+
+          if (
+            file.size >
+            2 * 1024 * 1024
+          ) {
+
+            showActionMessage(
+              "Logo Too Large",
+              "Please use a logo smaller than 2MB.",
+              "warning"
+            );
+
+            logoInput.value = "";
+
+            return;
+          }
+
+
+          const reader =
+            new FileReader();
+
+
+          reader.onload =
+            function (event) {
+
+              newLogo =
+                event.target.result;
+
+
+              if (preview) {
+
+                preview.innerHTML = `
+
+                  <img
+                    src="${newLogo}"
+                    alt="School Logo"
+                    style="
+                      max-width:120px;
+                      max-height:120px;
+                      object-fit:contain;
+                      border-radius:8px;
+                    "
+                  >
+
+                `;
+              }
+
+            };
+
+
+          reader.readAsDataURL(file);
+
+        }
+      );
+    }
+
+
+    function closeSettings() {
 
       if (
         modal &&
@@ -1499,133 +2156,247 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
+
     if (closeBtn) {
+
       closeBtn.addEventListener(
         "click",
-        closeModal
+        closeSettings
       );
     }
 
-    if (cancelBtn) {
-      cancelBtn.addEventListener(
-        "click",
-        closeModal
-      );
-    }
 
-    if (confirmBtn) {
+    if (removeLogoBtn) {
 
-      confirmBtn.addEventListener(
+      removeLogoBtn.addEventListener(
         "click",
         function () {
 
-          students = [];
+          newLogo = "";
 
-          subjects = [];
+          if (preview) {
 
-          calculationDone = false;
+            preview.innerHTML = `
 
-          positionDone = false;
+              <p>
+                Logo will be removed.
+              </p>
 
-          averageEnabled = false;
-
-          localStorage.removeItem(
-            "myStudents"
-          );
-
-          localStorage.removeItem(
-            "mySubjects"
-          );
-
-          localStorage.removeItem(
-            "calculationDone"
-          );
-
-          localStorage.removeItem(
-            "positionDone"
-          );
-
-          localStorage.removeItem(
-            "averageEnabled"
-          );
-
-          closeModal();
-
-          updateDashboard();
-
-          renderReport();
-
-          const averageButton =
-            document.getElementById(
-              "addAverageBtn"
-            );
-
-          if (averageButton) {
-
-            const text =
-              averageButton.querySelector(
-                "span:last-child"
-              );
-
-            if (text) {
-              text.textContent =
-                "Add Average";
-            }
+            `;
           }
 
+        }
+      );
+    }
+
+
+    if (saveBtn) {
+
+      saveBtn.addEventListener(
+        "click",
+        function () {
+
+          const name =
+            schoolInput.value.trim();
+
+
+          if (name) {
+            schoolName = name;
+          }
+
+
+          schoolLogo =
+            newLogo;
+
+
+          saveData();
+
+          updateHeaderLogo();
+
+          closeSettings();
+
+
           showActionMessage(
-            "Data Cleared",
-            "All student and subject data have been removed successfully.",
+            "Settings Saved",
+            "School name and logo settings have been saved.",
             "success"
           );
+
         }
       );
     }
   }
 
+/* =========================================================
+     UPDATE HEADER LOGO
+     ========================================================= */
 
-  /* =====================================================
-     PRINT REPORT
-  ===================================================== */
+  function updateHeaderLogo() {
 
-  function printCompleteReport() {
-
-    if (
-      students.length === 0 ||
-      subjects.length === 0
-    ) {
-
-      showActionMessage(
-        "Report Not Ready",
-        "Please add students and subjects first.",
-        "warning"
-      );
-
+    if (!schoolLogo) {
       return;
     }
 
-    const report =
-      reportPreview
-        ? reportPreview.innerHTML
-        : "";
+
+    const logos =
+      document.querySelectorAll(
+        ".brand img, .side-menu-brand img"
+      );
+
+
+    logos.forEach(
+      function (img) {
+
+        img.src =
+          schoolLogo;
+
+        img.alt =
+          schoolName + " Logo";
+
+      }
+    );
+  }
+
+
+  /* =========================================================
+     LOGOUT
+     ========================================================= */
+
+  if (logoutBtn) {
+
+    logoutBtn.addEventListener(
+      "click",
+      function () {
+
+        closeMenu();
+
+
+        const answer =
+          window.confirm(
+            "Are you sure you want to logout?"
+          );
+
+
+        if (!answer) {
+          return;
+        }
+
+
+        showActionMessage(
+          "Logout",
+          "Logout completed.",
+          "info"
+        );
+
+      }
+    );
+  }
+
+
+  /* =========================================================
+     CLEAR ALL DATA
+     ========================================================= */
+
+  if (clearDataBtn) {
+
+    clearDataBtn.addEventListener(
+      "click",
+      function () {
+
+        const answer =
+          window.confirm(
+            "WARNING: This will delete all students, subjects, marks and results. Continue?"
+          );
+
+
+        if (!answer) {
+          return;
+        }
+
+
+        localStorage.removeItem(
+          "myStudents"
+        );
+
+        localStorage.removeItem(
+          "mySubjects"
+        );
+
+        localStorage.removeItem(
+          "calculationDone"
+        );
+
+        localStorage.removeItem(
+          "positionDone"
+        );
+
+        localStorage.removeItem(
+          "averageEnabled"
+        );
+
+
+        students = [];
+
+        subjects = [];
+
+        calculationDone = false;
+
+        positionDone = false;
+
+        averageEnabled = false;
+
+
+        saveData();
+
+        updateDashboard();
+
+        renderReport();
+
+
+        showActionMessage(
+          "All Data Cleared",
+          "All student data has been removed successfully.",
+          "success"
+        );
+
+      }
+    );
+  }
+
+
+  /* =========================================================
+     PRINT / DOWNLOAD HELPERS
+     ========================================================= */
+
+  function createPrintWindow(
+    title,
+    bodyHTML,
+    orientation = "portrait"
+  ) {
 
     const printWindow =
       window.open(
         "",
-        "_blank",
-        "width=1200,height=800"
+        "_blank"
       );
+
 
     if (!printWindow) {
 
-      showActionMessage(
-        "Print Blocked",
-        "Please allow pop-ups for this website.",
-        "warning"
+      alert(
+        "Please allow pop-ups for this website so the report can be printed or saved as PDF."
       );
 
-      return;
+      return null;
     }
+
+
+    const landscape =
+      orientation === "landscape";
+
+
+    printWindow.document.open();
+
 
     printWindow.document.write(`
 
@@ -1638,13 +2409,13 @@ document.addEventListener("DOMContentLoaded", function () {
         <meta charset="UTF-8">
 
         <title>
-          My Student - Complete Report
+          ${escapeHTML(title)}
         </title>
 
         <style>
 
           @page {
-            size: A4 landscape;
+            size: A4 ${landscape ? "landscape" : "portrait"};
             margin: 10mm;
           }
 
@@ -1653,79 +2424,156 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           body {
-            font-family:
-              Arial,
-              Helvetica,
-              sans-serif;
-
-            color:#17202a;
-
-            background:#fff;
-
-            margin:0;
-
-            padding:10px;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #111;
+            background: white;
           }
 
-          h1 {
-            text-align:center;
-
-            color:#123b63;
-
-            margin:0 0 4px;
-
-            font-size:22px;
+          .print-page {
+            width: 100%;
+            min-height: 100%;
+            page-break-after: always;
           }
 
-          .subtitle {
-            text-align:center;
+          .print-page:last-child {
+            page-break-after: auto;
+          }
 
-            color:#687583;
+          .school-header {
+            text-align: center;
+            margin-bottom: 8px;
+          }
 
-            font-size:12px;
+          .school-logo {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 5px;
+          }
 
-            margin-bottom:15px;
+          .school-name {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 3px 0;
+            text-transform: uppercase;
+          }
+
+          .report-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 4px 0 10px;
           }
 
           table {
-            width:100%;
-
-            border-collapse:collapse;
+            width: 100%;
+            border-collapse: collapse;
           }
 
           th,
           td {
-            border:1px solid #9da8b1;
-
-            padding:6px;
-
-            font-size:10px;
-
-            text-align:center;
+            border: 1px solid #777;
+            padding: 5px 4px;
+            text-align: center;
+            font-size: 10px;
           }
 
           th {
-            background:#123b63;
-
-            color:#fff;
-
-            font-weight:700;
+            background: #0b5d3b;
+            color: white;
+            font-weight: 700;
           }
 
-          td:nth-child(2) {
-            text-align:left;
+          td.name {
+            text-align: left;
+            font-weight: 600;
           }
 
-          input {
-            width:55px;
+          .total-cell {
+            font-weight: 700;
+          }
 
-            border:none;
+          .position-cell {
+            font-weight: 700;
+          }
 
-            outline:none;
+          .student-info {
+            width: 100%;
+            margin-bottom: 12px;
+          }
 
-            text-align:center;
+          .student-info td {
+            border: none;
+            text-align: left;
+            padding: 3px 5px;
+            font-size: 13px;
+          }
 
-            background:transparent;
+          .student-info .label {
+            width: 25%;
+            font-weight: 700;
+          }
+
+          .summary-box {
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+          }
+
+          .summary-item {
+            border: 1px solid #555;
+            padding: 8px;
+            flex: 1;
+            text-align: center;
+            font-weight: 700;
+          }
+
+          .footer {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 10px;
+          }
+
+          .signature-area {
+            margin-top: 35px;
+            display: flex;
+            justify-content: space-between;
+          }
+
+          .signature {
+            width: 28%;
+            text-align: center;
+            border-top: 1px solid #222;
+            padding-top: 5px;
+            font-size: 11px;
+          }
+
+          .class-summary-title {
+            text-align: center;
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 10px;
+          }
+
+          .note {
+            margin-top: 12px;
+            font-size: 10px;
+          }
+
+          @media print {
+
+            body {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+
+            .no-print {
+              display: none !important;
+            }
+
           }
 
         </style>
@@ -1734,15 +2582,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
       <body>
 
-        <h1>
-          My Student
-        </h1>
+        ${bodyHTML}
 
-        <div class="subtitle">
-          Student Result Management System
-        </div>
+        <script>
 
-        ${report}
+          window.onload = function () {
+
+            setTimeout(function () {
+              window.print();
+            }, 500);
+
+          };
+
+        <\/script>
 
       </body>
 
@@ -1750,132 +2602,723 @@ document.addEventListener("DOMContentLoaded", function () {
 
     `);
 
+
     printWindow.document.close();
 
-    setTimeout(
-      function () {
 
-        printWindow.focus();
+    return printWindow;
+  }
 
-        printWindow.print();
 
-      },
-      500
-    );
-    }
-  /* =====================================================
-     DOWNLOAD PDF
-     ===================================================== */
+  /* =========================================================
+     SCHOOL HEADER FOR PRINT
+     ========================================================= */
 
-  function downloadPDF() {
+  function printSchoolHeader(
+    reportTitle
+  ) {
 
-    if (
-      students.length === 0 ||
-      subjects.length === 0
+    return `
+
+      <div class="school-header">
+
+        ${
+          schoolLogo
+            ? `
+              <img
+                class="school-logo"
+                src="${schoolLogo}"
+                alt="School Logo"
+              >
+            `
+            : ""
+        }
+
+        <div class="school-name">
+          ${escapeHTML(schoolName)}
+        </div>
+
+        <div class="report-title">
+          ${escapeHTML(reportTitle)}
+        </div>
+
+      </div>
+
+    `;
+  }
+
+
+  /* =========================================================
+     DOWNLOAD REPORT
+     ========================================================= */
+
+  function buildClassReportHTML() {
+
+    const pages = [];
+
+    const perPage = 30;
+
+
+    for (
+      let start = 0;
+      start < students.length;
+      start += perPage
     ) {
 
-      showActionMessage(
-        "Report Not Ready",
-        "Please add students and subjects first.",
-        "warning"
+      const pageStudents =
+        students.slice(
+          start,
+          start + perPage
+        );
+
+
+      let table = `
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>S/N</th>
+
+              <th>Student Name</th>
+
+      `;
+
+
+      subjects.forEach(
+        function (subject) {
+
+          table += `
+
+            <th>
+              ${escapeHTML(subject.name)}
+            </th>
+
+          `;
+
+        }
+      );
+
+
+      table += `
+
+              <th>Total</th>
+
+      `;
+
+
+      if (averageEnabled) {
+
+        table += `
+
+              <th>Average</th>
+
+        `;
+      }
+
+
+      table += `
+
+              <th>Position</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+      `;
+
+
+      pageStudents.forEach(
+        function (student, localIndex) {
+
+          const realIndex =
+            start + localIndex;
+
+
+          table += `
+
+            <tr>
+
+              <td>
+                ${realIndex + 1}
+              </td>
+
+              <td class="name">
+                ${escapeHTML(student.name)}
+              </td>
+
+          `;
+
+
+          subjects.forEach(
+            function (subject) {
+
+              const mark =
+                student.marks &&
+                student.marks[
+                  subject.id
+                ] !== undefined
+                  ? student.marks[
+                      subject.id
+                    ]
+                  : "";
+
+
+              table += `
+
+                <td>
+                  ${escapeHTML(mark)}
+                </td>
+
+              `;
+
+            }
+          );
+
+
+          table += `
+
+              <td class="total-cell">
+                ${Number(student.total || 0)}
+              </td>
+
+          `;
+
+
+          if (averageEnabled) {
+
+            table += `
+
+              <td>
+                ${Number(
+                  student.average || 0
+                ).toFixed(2)}
+              </td>
+
+            `;
+          }
+
+
+          table += `
+
+              <td class="position-cell">
+                ${
+                  student.position
+                    ? ordinal(student.position)
+                    : "—"
+                }
+              </td>
+
+            </tr>
+
+          `;
+
+        }
+      );
+
+
+      table += `
+
+          </tbody>
+
+        </table>
+
+      `;
+
+
+      pages.push(`
+
+        <div class="print-page">
+
+          ${printSchoolHeader(
+            "STUDENT RESULT REPORT"
+          )}
+
+          ${table}
+
+          <div class="footer">
+            Page ${
+              Math.floor(start / perPage) + 1
+            }
+          </div>
+
+        </div>
+
+      `);
+
+    }
+
+
+    return pages.join("");
+  }
+
+
+  function downloadClassReport() {
+
+    if (students.length === 0) {
+
+      alert(
+        "Please add students first."
       );
 
       return;
     }
 
-    showActionMessage(
-      "PDF Download",
-      "Choose 'Save as PDF' in the print window to save your report.",
-      "info"
+
+    if (subjects.length === 0) {
+
+      alert(
+        "Please add subjects first."
+      );
+
+      return;
+    }
+
+
+    if (!calculationDone) {
+
+      alert(
+        "Please calculate results first."
+      );
+
+      return;
+    }
+
+
+    createPrintWindow(
+      "Student Result Report",
+      buildClassReportHTML(),
+      "landscape"
+    );
+     }
+ /* =========================================================
+     STUDENT REPORT
+     ========================================================= */
+
+  function buildStudentReportsHTML() {
+
+    let html = "";
+
+
+    students.forEach(
+      function (student, index) {
+
+        let subjectRows = "";
+
+        let totalMarks =
+          Number(student.total || 0);
+
+
+        subjects.forEach(
+          function (subject, subjectIndex) {
+
+            const mark =
+              student.marks &&
+              student.marks[
+                subject.id
+              ] !== undefined
+                ? Number(
+                    student.marks[
+                      subject.id
+                    ]
+                  )
+                : 0;
+
+
+            subjectRows += `
+
+              <tr>
+
+                <td>
+                  ${subjectIndex + 1}
+                </td>
+
+                <td class="name">
+                  ${escapeHTML(subject.name)}
+                </td>
+
+                <td>
+                  100
+                </td>
+
+                <td>
+                  ${mark}
+                </td>
+
+                <td>
+                  ${mark}
+                </td>
+
+              </tr>
+
+            `;
+
+          }
+        );
+
+
+        html += `
+
+          <div class="print-page">
+
+            ${printSchoolHeader(
+              "STUDENT REPORT SHEET"
+            )}
+
+
+            <table class="student-info">
+
+              <tr>
+
+                <td class="label">
+                  STUDENT NAME:
+                </td>
+
+                <td>
+                  ${escapeHTML(student.name)}
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td class="label">
+                  STUDENT NO:
+                </td>
+
+                <td>
+                  ${index + 1}
+                </td>
+
+              </tr>
+
+            </table>
+
+
+            <table>
+
+              <thead>
+
+                <tr>
+
+                  <th>S/N</th>
+
+                  <th>SUBJECT</th>
+
+                  <th>MAXIMUM MARK</th>
+
+                  <th>SCORE</th>
+
+                  <th>TOTAL MARKS</th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                ${subjectRows}
+
+              </tbody>
+
+            </table>
+
+
+            <div class="summary-box">
+
+              <div class="summary-item">
+
+                TOTAL MARKS
+
+                <br>
+
+                ${totalMarks}
+
+              </div>
+
+
+              ${
+                averageEnabled
+                  ? `
+                    <div class="summary-item">
+
+                      AVERAGE
+
+                      <br>
+
+                      ${Number(
+                        student.average || 0
+                      ).toFixed(2)}
+
+                    </div>
+                  `
+                  : ""
+              }
+
+
+              <div class="summary-item">
+
+                POSITION
+
+                <br>
+
+                ${
+                  student.position
+                    ? ordinal(student.position)
+                    : "—"
+                }
+
+              </div>
+
+            </div>
+
+
+            <div class="signature-area">
+
+              <div class="signature">
+                Class Teacher
+              </div>
+
+              <div class="signature">
+                Head of Department
+              </div>
+
+              <div class="signature">
+                Principal
+              </div>
+
+            </div>
+
+
+            <div class="footer">
+
+              ${escapeHTML(schoolName)}
+
+              <br>
+
+              Student Result Management System
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
     );
 
-    setTimeout(
-      function () {
 
-        printCompleteReport();
+    return html;
+  }
 
-      },
-      600
+
+  function downloadStudentReports() {
+
+    if (students.length === 0) {
+
+      alert(
+        "Please add students first."
+      );
+
+      return;
+    }
+
+
+    if (subjects.length === 0) {
+
+      alert(
+        "Please add subjects first."
+      );
+
+      return;
+    }
+
+
+    if (!calculationDone) {
+
+      alert(
+        "Please calculate results first."
+      );
+
+      return;
+    }
+
+
+    createPrintWindow(
+      "Student Reports",
+      buildStudentReportsHTML(),
+      "portrait"
     );
   }
 
 
-  /* =====================================================
-     BUTTON CONNECTIONS
-  ===================================================== */
+  /* =========================================================
+     DOWNLOAD OPTIONS
+     ========================================================= */
 
-  if (addStudentBtn) {
+  function openDownloadOptions() {
 
-    addStudentBtn.addEventListener(
-      "click",
-      function (event) {
+    const old =
+      document.getElementById(
+        "downloadOptionsModal"
+      );
 
-        event.preventDefault();
+    if (old) {
+      old.remove();
+    }
 
-        addStudent();
 
+    const modal =
+      document.createElement("div");
+
+    modal.id =
+      "downloadOptionsModal";
+
+    modal.className =
+      "modal";
+
+
+    modal.innerHTML = `
+
+      <div
+        class="modal-content"
+        style="max-width:430px;"
+      >
+
+        <div class="modal-header">
+
+          <h3>
+            Download Options
+          </h3>
+
+          <button
+            type="button"
+            class="modal-close"
+            id="closeDownloadOptions"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <p>
+          Choose the type of report you want to download.
+        </p>
+
+
+        <div
+          style="
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+            margin-top:20px;
+          "
+        >
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="downloadReportOption"
+          >
+            📄 Download Report
+            <small>
+              Class report — A4 Landscape
+            </small>
+          </button>
+
+
+          <button
+            type="button"
+            class="btn btn-success"
+            id="downloadStudentReportOption"
+          >
+            👨‍🎓 Download Student Report
+            <small>
+              Individual student reports — A4
+            </small>
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    document.body.appendChild(modal);
+
+
+    const closeBtn =
+      document.getElementById(
+        "closeDownloadOptions"
+      );
+
+
+    const reportBtn =
+      document.getElementById(
+        "downloadReportOption"
+      );
+
+
+    const studentBtn =
+      document.getElementById(
+        "downloadStudentReportOption"
+      );
+
+
+    function close() {
+
+      if (
+        modal &&
+        modal.parentNode
+      ) {
+        modal.remove();
       }
-    );
-  }
+    }
 
 
-  if (addSubjectBtn) {
+    if (closeBtn) {
 
-    addSubjectBtn.addEventListener(
-      "click",
-      function (event) {
-
-        event.preventDefault();
-
-        addSubject();
-
-      }
-    );
-  }
+      closeBtn.addEventListener(
+        "click",
+        close
+      );
+    }
 
 
-  if (calculateBtn) {
+    if (reportBtn) {
 
-    calculateBtn.addEventListener(
-      "click",
-      function (event) {
+      reportBtn.addEventListener(
+        "click",
+        function () {
 
-        event.preventDefault();
+          close();
 
-        calculateMarks();
+          downloadClassReport();
 
-      }
-    );
-  }
-
-
-  if (positionBtn) {
-
-    positionBtn.addEventListener(
-      "click",
-      function (event) {
-
-        event.preventDefault();
-
-        makePosition();
-
-      }
-    );
-  }
+        }
+      );
+    }
 
 
-  if (printReportBtn) {
+    if (studentBtn) {
 
-    printReportBtn.addEventListener(
-      "click",
-      function (event) {
+      studentBtn.addEventListener(
+        "click",
+        function () {
 
-        event.preventDefault();
+          close();
 
-        printCompleteReport();
+          downloadStudentReports();
 
-      }
-    );
+        }
+      );
+    }
   }
 
 
@@ -1883,45 +3326,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
     downloadPdfBtn.addEventListener(
       "click",
-      function (event) {
-
-        event.preventDefault();
-
-        downloadPDF();
-
-      }
+      openDownloadOptions
     );
   }
 
 
-  if (clearDataBtn) {
+  /* =========================================================
+     PRINT REPORT
+     ========================================================= */
 
-    clearDataBtn.addEventListener(
+  if (printReportBtn) {
+
+    printReportBtn.addEventListener(
       "click",
-      function (event) {
+      function () {
 
-        event.preventDefault();
+        if (
+          students.length === 0 ||
+          subjects.length === 0
+        ) {
 
-        showClearWarning();
+          alert(
+            "Please add students and subjects first."
+          );
+
+          return;
+        }
+
+
+        if (!calculationDone) {
+
+          alert(
+            "Please calculate results first."
+          );
+
+          return;
+        }
+
+
+        createPrintWindow(
+          "Student Result Report",
+          buildClassReportHTML(),
+          "landscape"
+        );
 
       }
     );
   }
 
 
-  /* =====================================================
-     INITIALIZE APP
-  ===================================================== */
+  /* =========================================================
+     KEYBOARD ESCAPE
+     ========================================================= */
 
-  createAverageButton();
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+
+    }
+  );
+
+
+  /* =========================================================
+     INITIALIZE
+     ========================================================= */
+
+  updateHeaderLogo();
 
   updateDashboard();
 
   renderReport();
 
 
-  /* =====================================================
-     END
-  ===================================================== */
-
-});
+});  
