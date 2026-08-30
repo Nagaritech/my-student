@@ -747,3 +747,725 @@ document.addEventListener("DOMContentLoaded", function () {
   renderReport();
 
 });
+/* ===================================================
+     CALCULATE MARKS
+     =================================================== */
+
+  function calculateMarks() {
+
+    if (students.length === 0) {
+
+      showActionMessage(
+        "No Students Yet",
+        "Please add students first.",
+        "warning"
+      );
+
+      return;
+    }
+
+
+    if (subjects.length === 0) {
+
+      showActionMessage(
+        "No Subjects Yet",
+        "Please add subjects first.",
+        "warning"
+      );
+
+      return;
+    }
+
+
+    if (calculateBtn) {
+      calculateBtn.disabled = true;
+    }
+
+
+    showActionMessage(
+      "Calculating Results...",
+      `
+        Please wait while the system
+        calculates all student results.
+
+        <div class="calculation-bar">
+
+          <div
+            class="calculation-progress"
+            id="calculationProgress"
+          ></div>
+
+        </div>
+      `,
+      "loading"
+    );
+
+
+    let progress = 0;
+
+
+    const timer =
+      setInterval(function () {
+
+        progress += 5;
+
+
+        const progressBar =
+          document.getElementById(
+            "calculationProgress"
+          );
+
+
+        if (progressBar) {
+
+          progressBar.style.width =
+            progress + "%";
+        }
+
+
+        if (progress >= 100) {
+
+          clearInterval(timer);
+
+          finishCalculation();
+        }
+
+      }, 80);
+  }
+
+
+  /* ===================================================
+     FINISH CALCULATION
+     =================================================== */
+
+  function finishCalculation() {
+
+    students.forEach(
+      function (student) {
+
+        let total = 0;
+
+        let count = 0;
+
+
+        if (!student.marks) {
+          student.marks = {};
+        }
+
+
+        subjects.forEach(
+          function (subject) {
+
+            const rawValue =
+              student.marks[
+                subject.id
+              ];
+
+
+            if (
+              rawValue !== undefined &&
+              rawValue !== ""
+            ) {
+
+              const value =
+                Number(rawValue);
+
+
+              if (
+                Number.isFinite(value)
+              ) {
+
+                total += value;
+
+                count++;
+              }
+            }
+
+          }
+        );
+
+
+        student.total =
+          total;
+
+
+        student.average =
+          count > 0
+            ? total / count
+            : 0;
+
+
+        student.position =
+          null;
+      }
+    );
+
+
+    calculationDone = true;
+
+    positionDone = false;
+
+
+    saveData();
+
+    updateDashboard();
+
+    renderReport();
+
+
+    showActionMessage(
+      "Calculation Completed",
+      "All student results have been calculated successfully.",
+      "success"
+    );
+
+
+    if (calculateBtn) {
+      calculateBtn.disabled = false;
+    }
+  }
+
+ /* ===================================================
+     MAKE POSITION
+     =================================================== */
+
+  function makePosition() {
+
+    if (students.length === 0) {
+
+      showActionMessage(
+        "No Students Yet",
+        "Please add students first.",
+        "warning"
+      );
+
+      return;
+    }
+
+
+    if (subjects.length === 0) {
+
+      showActionMessage(
+        "No Subjects Yet",
+        "Please add subjects first.",
+        "warning"
+      );
+
+      return;
+    }
+
+
+    if (!calculationDone) {
+
+      showActionMessage(
+        "Calculate Results First",
+        "Please calculate the student results before making position.",
+        "warning"
+      );
+
+      return;
+    }
+
+
+    if (positionBtn) {
+      positionBtn.disabled = true;
+    }
+
+
+    showActionMessage(
+      "Making Positions...",
+      `
+        Please wait while the system
+        ranks all students.
+
+        <div class="calculation-bar">
+
+          <div
+            class="calculation-progress"
+            id="positionProgress"
+          ></div>
+
+        </div>
+      `,
+      "loading"
+    );
+
+
+    let progress = 0;
+
+
+    const timer =
+      setInterval(function () {
+
+        progress += 5;
+
+
+        const progressBar =
+          document.getElementById(
+            "positionProgress"
+          );
+
+
+        if (progressBar) {
+
+          progressBar.style.width =
+            progress + "%";
+        }
+
+
+        if (progress >= 100) {
+
+          clearInterval(timer);
+
+          finishPosition();
+        }
+
+      }, 80);
+  }
+
+
+  /* ===================================================
+     FINISH POSITION
+     =================================================== */
+
+  function finishPosition() {
+
+    const sorted =
+      [...students].sort(
+        function (a, b) {
+
+          return Number(
+            b.total || 0
+          ) -
+          Number(
+            a.total || 0
+          );
+        }
+      );
+
+
+    let currentPosition = 0;
+
+    let previousTotal = null;
+
+
+    sorted.forEach(
+      function (student, index) {
+
+        const total =
+          Number(
+            student.total || 0
+          );
+
+
+        if (
+          previousTotal === null ||
+          total !== previousTotal
+        ) {
+
+          currentPosition =
+            index + 1;
+        }
+
+
+        student.position =
+          currentPosition;
+
+
+        previousTotal =
+          total;
+      }
+    );
+
+
+    students =
+      students.map(
+        function (original) {
+
+          return (
+            sorted.find(
+              function (item) {
+
+                return item.id ===
+                  original.id;
+              }
+            ) || original
+          );
+        }
+      );
+
+
+    positionDone = true;
+
+
+    saveData();
+
+    updateDashboard();
+
+    renderReport();
+
+
+    showActionMessage(
+      "Position Completed",
+      "Student positions have been calculated successfully.",
+      "success"
+    );
+
+
+    if (positionBtn) {
+      positionBtn.disabled = false;
+    }
+        }
+/* ===================================================
+     RENDER REPORT
+     =================================================== */
+
+  function renderReport() {
+
+    if (!reportPreview) {
+      return;
+    }
+
+
+    if (
+      students.length === 0 ||
+      subjects.length === 0
+    ) {
+
+      reportPreview.innerHTML = `
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            📄
+          </div>
+
+          <h3>
+            Report Not Ready
+          </h3>
+
+          <p>
+            Add students and subjects,
+            enter their marks, then calculate.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+
+    let html = `
+
+      <div class="report-table-wrapper">
+
+        <table class="report-table">
+
+          <thead>
+
+            <tr>
+
+              <th>S/N</th>
+
+              <th>Student Name</th>
+
+    `;
+
+
+    subjects.forEach(
+      function (subject) {
+
+        html += `
+
+          <th>
+            ${escapeHTML(
+              subject.name
+            )}
+          </th>
+
+        `;
+      }
+    );
+
+
+    html += `
+
+              <th>Total</th>
+    `;
+
+
+    if (averageEnabled) {
+
+      html += `
+
+              <th>Average</th>
+
+      `;
+    }
+
+
+    html += `
+
+              <th>Position</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+    `;
+
+
+    students.forEach(
+      function (student, index) {
+
+        html += `
+
+          <tr>
+
+            <td>
+              <strong>
+                ${index + 1}
+              </strong>
+            </td>
+
+            <td>
+              <strong>
+                ${escapeHTML(
+                  student.name
+                )}
+              </strong>
+            </td>
+
+        `;
+
+
+        subjects.forEach(
+          function (subject) {
+
+            const mark =
+              student.marks &&
+              student.marks[
+                subject.id
+              ] !== undefined
+                ? student.marks[
+                    subject.id
+                  ]
+                : "";
+
+
+            html += `
+
+              <td>
+
+                <input
+                  class="mark-input"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value="${escapeHTML(mark)}"
+                  data-student-id="${student.id}"
+                  data-subject-id="${subject.id}"
+                  inputmode="numeric"
+                >
+
+              </td>
+
+            `;
+          }
+        );
+
+
+        html += `
+
+            <td>
+              <strong>
+                ${
+                  calculationDone
+                    ? Number(
+                        student.total || 0
+                      )
+                    : "—"
+                }
+              </strong>
+            </td>
+
+        `;
+
+
+        if (averageEnabled) {
+
+          html += `
+
+            <td>
+              <strong>
+                ${
+                  calculationDone
+                    ? Number(
+                        student.average || 0
+                      ).toFixed(2)
+                    : "—"
+                }
+              </strong>
+            </td>
+
+          `;
+        }
+
+
+        html += `
+
+            <td>
+              <strong>
+                ${
+                  positionDone
+                    ? student.position
+                    : "—"
+                }
+              </strong>
+            </td>
+
+          </tr>
+
+        `;
+      }
+    );
+
+
+    html += `
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+
+    reportPreview.innerHTML =
+      html;
+
+
+    connectMarkInputs();
+  }
+/* ===================================================
+     CONNECT MARK INPUTS
+     =================================================== */
+
+  function connectMarkInputs() {
+
+    if (!reportPreview) {
+      return;
+    }
+
+
+    const inputs =
+      reportPreview.querySelectorAll(
+        ".mark-input"
+      );
+
+
+    inputs.forEach(
+      function (input) {
+
+        input.addEventListener(
+          "input",
+          function () {
+
+            const studentId =
+              input.dataset.studentId;
+
+
+            const subjectId =
+              input.dataset.subjectId;
+
+
+            const student =
+              students.find(
+                function (item) {
+
+                  return String(
+                    item.id
+                  ) === String(
+                    studentId
+                  );
+                }
+              );
+
+
+            if (!student) {
+              return;
+            }
+
+
+            if (!student.marks) {
+              student.marks = {};
+            }
+
+
+            if (input.value === "") {
+
+              student.marks[
+                subjectId
+              ] = "";
+
+            } else {
+
+              let value =
+                Number(
+                  input.value
+                );
+
+
+              if (
+                !Number.isFinite(value)
+              ) {
+
+                value = 0;
+              }
+
+
+              value =
+                Math.max(
+                  0,
+                  Math.min(
+                    100,
+                    value
+                  )
+                );
+
+
+              input.value =
+                value;
+
+
+              student.marks[
+                subjectId
+              ] = value;
+            }
+
+
+            calculationDone = false;
+
+            positionDone = false;
+
+
+            student.total = 0;
+
+            student.average = 0;
+
+            student.position = null;
+
+
+            saveData();
+
+            updateDashboard();
+          }
+        );
+      }
+    );
+          }
